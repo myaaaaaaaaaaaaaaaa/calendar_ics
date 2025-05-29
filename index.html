@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>カレンダーイベント作成</title>
+</head>
+<body>
+  <h1>イベント作成フォーム</h1>
+  <label>日付と時間（例: 2025-06-01T10:00）: <input type="datetime-local" id="start"></label><br>
+  <label>終了時間: <input type="datetime-local" id="end"></label><br>
+  <label>タイトル: <input type="text" id="title"></label><br>
+  <label>説明: <input type="text" id="description"></label><br>
+  <label>場所: <input type="text" id="location"></label><br>
+  <button onclick="generateICS()">.icsファイルを作成</button>
+
+  <a id="downloadLink" style="display:none;">ダウンロード</a>
+
+  <script>
+    function generateICS() {
+      const start = document.getElementById("start").value.replace(/[-:]/g, "").slice(0, 15) + "Z";
+      const end = document.getElementById("end").value.replace(/[-:]/g, "").slice(0, 15) + "Z";
+      const title = document.getElementById("title").value;
+      const description = document.getElementById("description").value;
+      const location = document.getElementById("location").value;
+
+      const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+SUMMARY:${title}
+DTSTART:${start}
+DTEND:${end}
+LOCATION:${location}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+
+      const blob = new Blob([icsContent], { type: "text/calendar" });
+      const url = URL.createObjectURL(blob);
+      const link = document.getElementById("downloadLink");
+      link.href = url;
+      link.download = "event.ics";
+      link.textContent = ".icsファイルをダウンロード";
+      link.style.display = "inline";
+    }
+  </script>
+</body>
+</html>
